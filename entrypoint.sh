@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 node_labels="$(docker node inspect "$(docker node ls | awk '$2 == "*" {print $1}')" | jq -c '.[].Spec.Labels')"
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
