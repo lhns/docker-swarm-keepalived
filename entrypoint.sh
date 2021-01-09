@@ -34,7 +34,7 @@ if [ -z "$KEEPALIVED_IP" ]; then
 fi
 
 if [ -z "$KEEPALIVED_IP" ]; then
-  export KEEPALIVED_IP="$(echo "$node_metadata" | jq -r '.ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
+  export KEEPALIVED_IP="$(echo "$nodes_metadata" | jq -r 'map(select(.Self))[0].ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
 fi
 
 if [ -z "$KEEPALIVED_UNICAST_PEERS" ]; then
