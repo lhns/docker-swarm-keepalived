@@ -8,6 +8,12 @@
 
 Runs keepalived in docker swarm.
 
+Enable the "ip_vs" kernel module:
+```
+echo "modprobe ip_vs" >> /etc/modules
+modprobe ip_vs
+```
+
 ## Docker images
 https://hub.docker.com/r/lolhens/keepalived-swarm
 

@@ -13,7 +13,7 @@ if [ -z "$KEEPALIVED_INTERFACE" ]; then
 fi
 
 if [ -z "$KEEPALIVED_PASSWORD" ]; then
-  export KEEPALIVED_PASSWORD='d0cker'
+  export KEEPALIVED_PASSWORD='8cteD88Hq4SZpPxm'
 fi
 
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
@@ -30,6 +30,10 @@ fi
 
 if [ -z "$KEEPALIVED_IP" ]; then
   export KEEPALIVED_IP="$(ip route get 1 | awk '{print $(NF-2);exit}')"
+fi
+
+if [ -z "$KEEPALIVED_UNICAST_PEERS" ]; then
+  export KEEPALIVED_UNICAST_PEERS="$(docker node inspect $(docker node ls | tail -n +2 | awk '{print $1}') | jq -r '.[].ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
 fi
 
 export KEEPALIVED_UNICAST_PEERS="$(jq -nr --arg peers "$KEEPALIVED_UNICAST_PEERS" --arg ip "$KEEPALIVED_IP" '$peers|split(",\\s*";"")|map(select(.!=$ip)|"\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
