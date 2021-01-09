@@ -2,8 +2,8 @@
 
 set -eo pipefail
 
-node_metadata="$(docker node inspect "$(docker node ls | awk '$2 == "*" {print $1}')" | jq -c '.[]')"
-node_labels="$(echo "$node_metadata" | jq -c '.Spec.Labels')"
+nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc '')"
+node_labels="$(echo "$nodes_metadata" | jq -c 'map(select(.Self))[0].Spec.Labels')"
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
   export KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE|select(.!=null)')"
@@ -38,7 +38,7 @@ if [ -z "$KEEPALIVED_IP" ]; then
 fi
 
 if [ -z "$KEEPALIVED_UNICAST_PEERS" ]; then
-  export KEEPALIVED_UNICAST_PEERS="$(docker node inspect $(docker node ls | tail -n +2 | awk '{print $1}') | jq -sr 'map(.[].ManagerStatus.Addr|select(.!=null)|split(":")[0])|join(",")')"
+  export KEEPALIVED_UNICAST_PEERS="$(echo "$nodes_metadata" | jq -r 'map(.ManagerStatus.Addr|select(.!=null)|split(":")[0])|join(",")')"
 fi
 
 export KEEPALIVED_UNICAST_PEERS="$(jq -nr --arg peers "$KEEPALIVED_UNICAST_PEERS" --arg ip "$KEEPALIVED_IP" '$peers|split(",\\s*";"")|map(select(.!=$ip)|"\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
