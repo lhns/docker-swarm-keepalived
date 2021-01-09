@@ -57,7 +57,11 @@ if [ -z "$KEEPALIVED_STATE" ]; then
   export KEEPALIVED_STATE='BACKUP'
 fi
 
-exec docker run -i --rm --name keepalived \
+if [ -z "$KEEPALIVED_CONTAINER_NAME" ]; then
+  export KEEPALIVED_CONTAINER_NAME='keepalived'
+fi
+
+exec docker run -i --rm --name "$KEEPALIVED_CONTAINER_NAME" \
   --net=host \
   --cap-add=NET_ADMIN \
   --cap-add=NET_BROADCAST \
