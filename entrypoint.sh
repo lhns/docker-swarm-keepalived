@@ -2,10 +2,11 @@
 
 set -eo pipefail
 
-node_labels="$(docker node inspect "$(docker node ls | awk '$2 == "*" {print $1}')" | jq -c '.[].Spec.Labels')"
+node_metadata="$(docker node inspect "$(docker node ls | awk '$2 == "*" {print $1}')" | jq -c '.[]')"
+node_labels="$(echo "$node_metadata" | jq -c '.Spec.Labels')"
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
-  export KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE // ""')"
+  export KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE|select(.!=null)')"
 fi
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
@@ -17,7 +18,7 @@ if [ -z "$KEEPALIVED_PASSWORD" ]; then
 fi
 
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
-  export KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY // ""')"
+  export KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY|select(.!=null)')"
 fi
 
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
@@ -29,7 +30,11 @@ if [ -z "$KEEPALIVED_ROUTER_ID" ]; then
 fi
 
 if [ -z "$KEEPALIVED_IP" ]; then
-  export KEEPALIVED_IP="$(ip route get 1 | awk '{print $(NF-2);exit}')"
+  export KEEPALIVED_IP="$(echo "$node_labels" | jq -r '.KEEPALIVED_IP|select(.!=null)')"
+fi
+
+if [ -z "$KEEPALIVED_IP" ]; then
+  export KEEPALIVED_IP="$(echo "$node_metadata" | jq -r '.ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
 fi
 
 if [ -z "$KEEPALIVED_UNICAST_PEERS" ]; then

@@ -8,11 +8,19 @@
 
 Runs keepalived in docker swarm.
 
-Enable the "ip_vs" kernel module:
+## Usage
+- Enable the "ip_vs" kernel module
 ```
 echo "modprobe ip_vs" >> /etc/modules
 modprobe ip_vs
 ```
+- Set a different priority for each node
+```
+docker node update node1 --label-add KEEPALIVED_PRIORITY=100
+docker node update node2 --label-add KEEPALIVED_PRIORITY=200
+docker node update node3 --label-add KEEPALIVED_PRIORITY=300
+```
+- Deploy the stack
 
 ## Docker images
 https://hub.docker.com/r/lolhens/keepalived-swarm
