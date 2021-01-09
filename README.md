@@ -50,5 +50,10 @@ networks:
     name: host
 ```
 
+## Helpful Links
+- https://github.com/acassen/keepalived
+- https://github.com/osixia/docker-keepalived
+- https://geek-cookbook.funkypenguin.co.nz/ha-docker-swarm/keepalived/
+
 ## License
 This project uses the Apache 2.0 License. See the file called LICENSE.
