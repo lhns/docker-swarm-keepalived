@@ -34,7 +34,6 @@ services:
       placement:
         constraints: [node.role == manager]
     environment:
-      KEEPALIVED_UNICAST_PEERS: "192.168.1.10, 192.168.1.11, 192.168.1.12"
       KEEPALIVED_VIRTUAL_IPS: "192.168.1.231, 192.168.1.232"
 
 networks:
