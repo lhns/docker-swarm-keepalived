@@ -6,7 +6,7 @@
 [![Docker Image Layers](https://img.shields.io/microbadger/layers/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Apache License 2.0](https://img.shields.io/github/license/LolHens/docker-swarm-keepalived.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
-Runs keepalived in docker swarm.
+Runs [keepalived](https://github.com/acassen/keepalived) in docker swarm.
 
 ## Usage
 - Enable the "ip_vs" kernel module
