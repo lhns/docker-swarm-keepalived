@@ -9,10 +9,9 @@
 Operator for [keepalived](https://github.com/acassen/keepalived) on docker swarm.
 
 ## Usage
-- Enable the "ip_vs" kernel module
+- Enable the "ip_vs" kernel module if not enabled
 ```sh
-echo "modprobe ip_vs" >> /etc/modules
-modprobe ip_vs
+lsmod | grep -P '^ip_vs\s' || (echo "modprobe ip_vs" >> /etc/modules && modprobe ip_vs)
 ```
 - Set a different priority for each node
 ```sh
