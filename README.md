@@ -8,6 +8,8 @@
 
 Operator for [keepalived](https://github.com/acassen/keepalived) on docker swarm.
 
+Uses [osixia/docker-keepalived](https://github.com/osixia/docker-keepalived).
+
 ## Usage
 - Enable the "ip_vs" kernel module if not enabled
 ```sh
