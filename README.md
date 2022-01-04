@@ -26,6 +26,8 @@ docker node update node3 --label-add KEEPALIVED_PRIORITY=300
 
 ## Docker images
 
+https://github.com/LolHens/docker-swarm-keepalived/pkgs/container/keepalived-swarm
+
 https://hub.docker.com/r/lolhens/keepalived-swarm
 
 ## Docker Stack
