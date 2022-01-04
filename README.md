@@ -1,6 +1,6 @@
 # docker-swarm-keepalived
 
-[![Docker Build](https://img.shields.io/docker/cloud/build/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm/builds)
+[![Build Workflow](https://github.com/LolHens/docker-swarm-keepalived/workflows/build/badge.svg)](https://github.com/LolHens/docker-swarm-keepalived/actions?query=workflow%3Abuild)
 [![Docker Stars](https://img.shields.io/docker/stars/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Image Size](https://img.shields.io/docker/image-size/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
