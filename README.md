@@ -1,9 +1,9 @@
 # docker-swarm-keepalived
+
 [![Docker Build](https://img.shields.io/docker/cloud/build/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm/builds)
 [![Docker Stars](https://img.shields.io/docker/stars/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Image Size](https://img.shields.io/docker/image-size/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
-[![Docker Image Layers](https://img.shields.io/microbadger/layers/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Apache License 2.0](https://img.shields.io/github/license/LolHens/docker-swarm-keepalived.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
 Operator for [keepalived](https://github.com/acassen/keepalived) on docker swarm.
@@ -11,6 +11,7 @@ Operator for [keepalived](https://github.com/acassen/keepalived) on docker swarm
 Uses [osixia/docker-keepalived](https://github.com/osixia/docker-keepalived).
 
 ## Usage
+
 - Enable the "ip_vs" kernel module if not enabled
 ```sh
 lsmod | grep -P '^ip_vs\s' || (echo "modprobe ip_vs" >> /etc/modules && modprobe ip_vs)
@@ -24,9 +25,11 @@ docker node update node3 --label-add KEEPALIVED_PRIORITY=300
 - Deploy the stack
 
 ## Docker images
+
 https://hub.docker.com/r/lolhens/keepalived-swarm
 
 ## Docker Stack
+
 ```yml
 version: '3.7'
 
@@ -52,9 +55,11 @@ networks:
 ```
 
 ## Helpful Links
+
 - https://github.com/acassen/keepalived
 - https://github.com/osixia/docker-keepalived
 - https://geek-cookbook.funkypenguin.co.nz/ha-docker-swarm/keepalived/
 
 ## License
+
 This project uses the Apache 2.0 License. See the file called LICENSE.
