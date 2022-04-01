@@ -1,10 +1,10 @@
 # docker-swarm-keepalived
 
-[![Build Workflow](https://github.com/LolHens/docker-swarm-keepalived/workflows/build/badge.svg)](https://github.com/LolHens/docker-swarm-keepalived/actions?query=workflow%3Abuild)
+[![Build Workflow](https://github.com/lhns/docker-swarm-keepalived/workflows/build/badge.svg)](https://github.com/lhns/docker-swarm-keepalived/actions?query=workflow%3Abuild)
 [![Docker Stars](https://img.shields.io/docker/stars/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Pulls](https://img.shields.io/docker/pulls/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
 [![Docker Image Size](https://img.shields.io/docker/image-size/lolhens/keepalived-swarm)](https://hub.docker.com/r/lolhens/keepalived-swarm)
-[![Apache License 2.0](https://img.shields.io/github/license/LolHens/docker-swarm-keepalived.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Apache License 2.0](https://img.shields.io/github/license/lhns/docker-swarm-keepalived.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
 Operator for [keepalived](https://github.com/acassen/keepalived) on docker swarm.
 
