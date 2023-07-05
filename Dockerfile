@@ -1,4 +1,4 @@
-FROM debian:12
+FROM ghcr.io/lhns/debian-jq
 
 ENV CLEANIMAGE_VERSION 2.0
 ENV CLEANIMAGE_URL https://raw.githubusercontent.com/lhns/docker-cleanimage/$CLEANIMAGE_VERSION/cleanimage
