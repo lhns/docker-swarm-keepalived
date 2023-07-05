@@ -62,7 +62,7 @@ if [ -z "$KEEPALIVED_CONTAINER_NAME" ]; then
   export KEEPALIVED_CONTAINER_NAME='keepalived'
 fi
 
-exec docker run -i --rm --name "$KEEPALIVED_CONTAINER_NAME" \
+exec docker run -i --sig-proxy --rm --name "$KEEPALIVED_CONTAINER_NAME" \
   --net=host \
   --cap-add=NET_ADMIN \
   --cap-add=NET_BROADCAST \
