@@ -1,66 +1,79 @@
 #!/bin/bash
 
-set -eo pipefail
+set -e -o pipefail
 
 nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc '')"
 node_labels="$(echo "$nodes_metadata" | jq -c 'map(select(.Self))[0].Spec.Labels')"
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
-  export KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE|select(.!=null)')"
+  KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE|select(.!=null)')"
 fi
-
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
-  export KEEPALIVED_INTERFACE="$(ip route get 1 | awk '{print $(NF-4);exit}')"
+  KEEPALIVED_INTERFACE="$(ip route get 1 | awk '{print $(NF-4);exit}')"
 fi
+export KEEPALIVED_INTERFACE
 
 if [ -z "$KEEPALIVED_PASSWORD" ]; then
-  export KEEPALIVED_PASSWORD='8cteD88Hq4SZpPxm'
+  KEEPALIVED_PASSWORD='8cteD88Hq4SZpPxm'
 fi
+export KEEPALIVED_PASSWORD
 
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
-  export KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY|select(.!=null)')"
+  KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY|select(.!=null)')"
 fi
-
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
   echo "KEEPALIVED_PRIORITY must be set!" >&2
   exit 1
 fi
+export KEEPALIVED_PRIORITY
 
 if [ -z "$KEEPALIVED_ROUTER_ID" ]; then
-  export KEEPALIVED_ROUTER_ID='51'
+  KEEPALIVED_ROUTER_ID='51'
 fi
+export KEEPALIVED_ROUTER_ID
 
 if [ -z "$KEEPALIVED_IP" ]; then
-  export KEEPALIVED_IP="$(echo "$node_labels" | jq -r '.KEEPALIVED_IP|select(.!=null)')"
+  KEEPALIVED_IP="$(echo "$node_labels" | jq -r '.KEEPALIVED_IP|select(.!=null)')"
 fi
-
 if [ -z "$KEEPALIVED_IP" ]; then
-  export KEEPALIVED_IP="$(echo "$nodes_metadata" | jq -r 'map(select(.Self))[0].ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
+  KEEPALIVED_IP="$(echo "$nodes_metadata" | jq -r 'map(select(.Self))[0].ManagerStatus.Addr|select(.!=null)|split(":")[0]')"
 fi
+export KEEPALIVED_IP
 
 if [ -z "$KEEPALIVED_UNICAST_PEERS" ]; then
-  export KEEPALIVED_UNICAST_PEERS="$(echo "$nodes_metadata" | jq -r 'map(.ManagerStatus.Addr|select(.!=null)|split(":")[0])|join(",")')"
+  KEEPALIVED_UNICAST_PEERS="$(echo "$nodes_metadata" | jq -r 'map(.ManagerStatus.Addr|select(.!=null)|split(":")[0])|join(",")')"
 fi
+KEEPALIVED_UNICAST_PEERS="$(jq -nr --arg peers "$KEEPALIVED_UNICAST_PEERS" --arg ip "$KEEPALIVED_IP" '$peers|split(",\\s*";"")|map(select(.!=$ip)|"\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
+export KEEPALIVED_UNICAST_PEERS
 
-export KEEPALIVED_UNICAST_PEERS="$(jq -nr --arg peers "$KEEPALIVED_UNICAST_PEERS" --arg ip "$KEEPALIVED_IP" '$peers|split(",\\s*";"")|map(select(.!=$ip)|"\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
-
-export KEEPALIVED_VIRTUAL_IPS="$(jq -nr --arg ips "$KEEPALIVED_VIRTUAL_IPS" '$ips|split(",\\s*";"")|map("\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
+KEEPALIVED_VIRTUAL_IPS="$(jq -nr --arg ips "$KEEPALIVED_VIRTUAL_IPS" '$ips|split(",\\s*";"")|map("\u0027\(.)\u0027")|join(",")|"#PYTHON2BASH:[\(.)]"')"
+export KEEPALIVED_VIRTUAL_IPS
 
 if [ -z "$KEEPALIVED_NOTIFY" ]; then
-  export KEEPALIVED_NOTIFY='/container/service/keepalived/assets/notify.sh'
+  KEEPALIVED_NOTIFY='/container/service/keepalived/assets/notify.sh'
 fi
+export KEEPALIVED_NOTIFY
 
 if [ -z "$KEEPALIVED_COMMAND_LINE_ARGUMENTS" ]; then
-  export KEEPALIVED_COMMAND_LINE_ARGUMENTS='--log-detail --dump-conf'
+  KEEPALIVED_COMMAND_LINE_ARGUMENTS='--log-detail --dump-conf'
 fi
+export KEEPALIVED_COMMAND_LINE_ARGUMENTS
 
 if [ -z "$KEEPALIVED_STATE" ]; then
-  export KEEPALIVED_STATE='BACKUP'
+  KEEPALIVED_STATE='BACKUP'
 fi
+export KEEPALIVED_STATE
+
+getCurrentContainerId() {
+  local cpuset
+  cpuset="$(cat /proc/self/cpuset)"
+  echo "${cpuset#/docker/}"
+}
 
 if [ -z "$KEEPALIVED_CONTAINER_NAME" ]; then
-  export KEEPALIVED_CONTAINER_NAME='keepalived'
+  KEEPALIVED_CONTAINER_NAME="keepalived-$(getCurrentContainerId)"
 fi
+export KEEPALIVED_CONTAINER_NAME
 
 exec docker run -i --sig-proxy --rm --name "$KEEPALIVED_CONTAINER_NAME" \
   --net=host \
