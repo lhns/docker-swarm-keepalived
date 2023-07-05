@@ -64,14 +64,9 @@ if [ -z "$KEEPALIVED_STATE" ]; then
 fi
 export KEEPALIVED_STATE
 
-getCurrentContainerId() {
-  local cpuset
-  cpuset="$(cat /proc/self/cpuset)"
-  echo "${cpuset#/docker/}"
-}
-
 if [ -z "$KEEPALIVED_CONTAINER_NAME" ]; then
-  KEEPALIVED_CONTAINER_NAME="keepalived-$(getCurrentContainerId)"
+  container_id="$(cat /proc/self/mountinfo | grep "/docker/containers/" | head -1 | sed -E 's/.*?\/docker\/containers\/([^/]*?).*/\1/')"
+  KEEPALIVED_CONTAINER_NAME="keepalived-$container_id"
 fi
 export KEEPALIVED_CONTAINER_NAME
 
