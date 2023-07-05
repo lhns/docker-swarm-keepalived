@@ -33,14 +33,13 @@ https://hub.docker.com/r/lolhens/keepalived-swarm
 ## Docker Stack
 
 ```yml
-version: '3.7'
+version: '3.8'
 
 services:
   keepalived:
     image: lhns/keepalived-swarm:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker:ro
     networks:
       - host
     deploy:

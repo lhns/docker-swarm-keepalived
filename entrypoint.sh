@@ -22,7 +22,8 @@ if [ -z "$KEEPALIVED_PRIORITY" ]; then
 fi
 
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
-  export KEEPALIVED_PRIORITY='150'
+  echo "KEEPALIVED_PRIORITY must be set!" >&2
+  exit 1
 fi
 
 if [ -z "$KEEPALIVED_ROUTER_ID" ]; then
