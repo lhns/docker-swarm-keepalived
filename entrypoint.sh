@@ -21,8 +21,8 @@ export KEEPALIVED_PASSWORD
 if [ -z "$KEEPALIVED_PRIORITY" ]; then
   KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY|select(.!=null)')"
 fi
-if [ -z "$KEEPALIVED_PRIORITY" ]; then
-  echo "KEEPALIVED_PRIORITY must be set!" >&2
+if [ -z "$KEEPALIVED_PRIORITY" ] || (( KEEPALIVED_PRIORITY < 0 || KEEPALIVED_PRIORITY > 255 )); then
+  echo "KEEPALIVED_PRIORITY must be set between 0 and 255!" >&2
   exit 1
 fi
 export KEEPALIVED_PRIORITY
