@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc '')"
+nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc .)"
 node_labels="$(echo "$nodes_metadata" | jq -c 'map(select(.Self))[0].Spec.Labels')"
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
