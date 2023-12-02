@@ -19,16 +19,14 @@ lsmod | grep -P '^ip_vs\s' || (echo "modprobe ip_vs" >> /etc/modules && modprobe
 - Set a different priority for each node
 ```sh
 docker node update node1 --label-add KEEPALIVED_PRIORITY=100
-docker node update node2 --label-add KEEPALIVED_PRIORITY=200
-docker node update node3 --label-add KEEPALIVED_PRIORITY=300
+docker node update node2 --label-add KEEPALIVED_PRIORITY=101
+docker node update node3 --label-add KEEPALIVED_PRIORITY=102
 ```
 - Deploy the stack
 
 ## Docker images
 
 https://github.com/lhns/docker-swarm-keepalived/pkgs/container/keepalived-swarm
-
-https://hub.docker.com/r/lolhens/keepalived-swarm
 
 ## Docker Stack
 
@@ -37,7 +35,7 @@ version: '3.8'
 
 services:
   keepalived:
-    image: lhns/keepalived-swarm:latest
+    image: ghcr.io/lhns/keepalived-swarm
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
