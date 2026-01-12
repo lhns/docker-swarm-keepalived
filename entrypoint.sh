@@ -2,8 +2,20 @@
 
 set -e -o pipefail
 
-nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc .)"
-node_labels="$(echo "$nodes_metadata" | jq -c 'map(select(.Self))[0].Spec.Labels')"
+throw() {
+  err=$?
+  if [[ "$err" == 0 ]]; then err=1; fi
+  if [[ "$2" != "" ]]; then err="$2"; fi
+  echo "$1 ($err)" >&2
+  return "$err"
+}
+
+nodes_metadata="$(while IFS= read -r node; do docker node inspect "$(echo "$node" | jq -r .ID)" | jq -c --argjson node "$node" '.[]|.+{Self:$node.Self}'; done < <(docker node ls --format '{{json .}}') | jq -sc .)" || {
+  throw "failed to query nodes_metadata"
+}
+node_labels="$(echo "$nodes_metadata" | jq -c 'map(select(.Self))[0].Spec.Labels')" || {
+  throw "failed to query node_labels"
+}
 
 if [ -z "$KEEPALIVED_INTERFACE" ]; then
   KEEPALIVED_INTERFACE="$(echo "$node_labels" | jq -r '.KEEPALIVED_INTERFACE|select(.!=null)')"
@@ -22,8 +34,7 @@ if [ -z "$KEEPALIVED_PRIORITY" ]; then
   KEEPALIVED_PRIORITY="$(echo "$node_labels" | jq -r '.KEEPALIVED_PRIORITY|select(.!=null)')"
 fi
 if [ -z "$KEEPALIVED_PRIORITY" ] || (( KEEPALIVED_PRIORITY < 0 || KEEPALIVED_PRIORITY > 255 )); then
-  echo "KEEPALIVED_PRIORITY must be set between 0 and 255!" >&2
-  exit 1
+  throw "KEEPALIVED_PRIORITY must be set between 0 and 255!"
 fi
 export KEEPALIVED_PRIORITY
 
@@ -65,7 +76,9 @@ fi
 export KEEPALIVED_STATE
 
 if [ -z "$KEEPALIVED_CONTAINER_NAME" ]; then
-  container_id="$(cat /proc/self/mountinfo | grep "/docker/containers/" | head -1 | sed -E 's/.*?\/docker\/containers\/([^/]*?).*/\1/')"
+  container_id="$(grep -Po -m 1 '(?<=/)[0-9a-f]{64}(?=/hostname)' /proc/self/mountinfo)" || {
+    throw "failed to query container_id"
+  }
   KEEPALIVED_CONTAINER_NAME="keepalived-$container_id"
 fi
 export KEEPALIVED_CONTAINER_NAME
